@@ -1,0 +1,27 @@
+name: Database CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up MySQL client
+        run: sudo apt-get install -y mysql-client
+
+      - name: Run SQL Script to Add Table
+        env:
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DB: mydatabase
+        run: |
+          mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DB < sql-scripts/add_departments.sql
+
